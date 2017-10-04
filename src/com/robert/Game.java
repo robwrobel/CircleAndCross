@@ -10,10 +10,11 @@ package com.robert;
  * @author Robert
  */
 class Game {
-    private boolean anotherGame;
+    private boolean isNextGame;
     private boolean isFirstGame=true;
     private Board board;
     private Player player1,player2;
+    private Player currentPlayer;
     private final Screen screen;
     public Game() {
         screen = new Screen();
@@ -22,13 +23,29 @@ class Game {
         do
         {
             initialize();
-            anotherGame=startNewGame();
+            startNewGame();
+            isNextGame=isNextGame();
             isFirstGame=false;
-        } while (anotherGame);
+        } while (isNextGame);
     }
 
-    private boolean startNewGame() {
-        
+    private void startNewGame() {
+        boolean isWin=false;
+        boolean isBoardFull=false;
+        do {
+            displayBoard();
+            askPlayerForMove();
+            isWin = checkIfWin();
+            isBoardFull=checkIfBoardFull();
+            if (isWin || isBoardFull) break;
+            switchPlayer();
+        } while (true);
+        if (isWin) {
+            congratulatePlayer();
+        } else if (isBoardFull) {
+            weHaveADraw();
+        }
+            
     }
 
     private void initialize() {
@@ -40,7 +57,7 @@ class Game {
         if (isFirstGame) {
             initializeNewPlayers();
         } else {
-            screen.print("Start game with new players?(y/n)\n");
+            screen.print("Start game with new players?(y/n)");
             if (screen.isYes()) {
                 initializeNewPlayers();
             }
@@ -57,10 +74,62 @@ class Game {
         player2.setName(player2Name);
         player1.setTag(Tag.O);
         player2.setTag(Tag.X);
+        currentPlayer=player1;
     }
 
     private void initializeBoard() {
         board = new Board();
+    }
+
+    private boolean isNextGame() {
+        screen.print("Play another game?(y/n)");
+        return screen.isYes();
+    }
+
+    private void displayBoard() {
+        screen.print(board.toString());
+    }
+
+    private void askPlayerForMove() {
+        boolean isSetValid;
+        do {
+            screen.print("Player:"+currentPlayer+". Please choose row position:");
+            int row=screen.getIntFromRange(1,Board.ROWS);
+            screen.print("Please choose column position:");
+            int col=screen.getIntFromRange(1,Board.COLS);
+            isSetValid=board.setTag(row,col,currentPlayer.getTag());
+            if (!isSetValid)
+                screen.print("This position is taken please choose another");
+            else break;
+        } while (true);
+    }
+
+    private boolean isGameOver() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private boolean checkIfWin() {
+        return board.checkIfWin(currentPlayer.getTag());
+    }
+
+    private void switchPlayer() {
+        if (currentPlayer==player1) {
+            currentPlayer=player2;
+        } else {
+            currentPlayer=player1;
+        }
+    }
+
+    private boolean checkIfBoardFull() {
+        return board.checkIfFull();
+    }
+
+    private void congratulatePlayer() {
+        screen.print("Player:"+currentPlayer+" is a WINNER. Congratulation!!!"); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void weHaveADraw() {
+        screen.print("There is no winner.We have a draw");
     }
     
 }

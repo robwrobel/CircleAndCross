@@ -35,5 +35,21 @@ class Screen {
             }
         }
     }
+
+    int getIntFromRange(int min, int max) {
+        while(true) {
+            if (scanner.hasNextInt()){
+                int answer = scanner.nextInt();
+                if (answer>=min && answer<=max)
+                    return answer;
+                else {
+                    System.out.println("Please provide number between "+min+" and "+max);
+                }
+            } else {
+                scanner.next();
+                System.out.println("Please provide number");
+            }
+        }
+    }
     
 }

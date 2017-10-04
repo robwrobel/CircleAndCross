@@ -19,5 +19,14 @@ class Player {
     void setTag(Tag tag) {
         this.tag=tag;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    Tag getTag() {
+        return tag;
+    }
     
 }
